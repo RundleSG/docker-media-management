@@ -19,3 +19,40 @@ services:
     ports:
       - 9117:9117
     restart: unless-stopped
+  radarr:
+    image: lscr.io/linuxserver/radarr
+    container_name: radarr
+    env_file:
+      - ./.env
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    volumes:
+      - ${PATH_RADARR_CONF}:/config
+      - ${PATH_RADARR_MOVIES}:/movies #optional
+      - ${PATH_QBIT_DOWNLOADS}:/downloads #optional
+      # - /path/to/data:/config
+      # - /path/to/movies:/movies #optional
+      # - /path/to/downloadclient-downloads:/downloads #optional
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+  sonarr:
+    image: lscr.io/linuxserver/sonarr
+    container_name: sonarr
+    env_file:
+      - ./.env
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    volumes:
+      - ${PATH_SONARR_CONF}:/config
+      - ${PATH_SONARR_TV}:/tv #optional
+      - ${PATH_QBIT_DOWNLOADS}:/downloads #optional
+      # - /path/to/tvseries:/tv #optional
+      # - /path/to/downloadclient-downloads:/downloads #optional
+    ports:
+      - 8989:8989
+    restart: unless-stopped

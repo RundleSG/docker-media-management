@@ -1,10 +1,28 @@
 version: "2.1"
 services:
+  rclone:
+    image: lucashalbert/rclone
+    container_name: rclone-${NAMESPACE}
+    devices:
+      - /dev/fuse
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    privileged: true
+    volumes:
+      - ${PATH_RCLONE_CONF}:/config
+      - ${PATH_RCLONE_HOSTDIR}:/mnt:shared
+    environment:
+      - CONFIG=--config /config/rclone.conf
+      - SUBCMD=mount
+      - "PARAMS=-vv --allow-other --drive-chunk-size 4M --dir-cache-time=336h --cache-info-age=1344h --cache-chunk-size 4M --cache-chunk-total-size=50G --cache-tmp-wait-time=1h --vfs-cache-mode=writes --write-back-cache --tpslimit=8 ${RCLONE_CONNECTION} /mnt"
+    # restart: unless-stopped
   jackett:
     image: lscr.io/linuxserver/jackett
     container_name: jackett-${NAMESPACE}
     env_file:
-      - ./.env
+      - .env
     environment:
       - PUID=1000
       - PGID=1000
@@ -12,10 +30,7 @@ services:
       - AUTO_UPDATE=true #optional
       - RUN_OPTS=<run options here> #optional
     volumes:
-      # - <path to data>:/config
-      # - <path to blackhole>:/downloads
       - ${PATH_JACKETT_CONF}:/config 
-      # - ${PATH_JACKETT_DOWNLOADS}:/downloads
     ports:
       - 9117:9117
     restart: unless-stopped
@@ -23,7 +38,7 @@ services:
     image: lscr.io/linuxserver/radarr
     container_name: radarr-${NAMESPACE}
     env_file:
-      - ./.env
+      - .env
     environment:
       - PUID=1000
       - PGID=1000
@@ -32,9 +47,6 @@ services:
       - ${PATH_RADARR_CONF}:/config
       - ${PATH_RADARR_MOVIES}:/movies #optional
       - ${PATH_QBIT_DOWNLOADS}:/downloads #optional
-      # - /path/to/data:/config
-      # - /path/to/movies:/movies #optional
-      # - /path/to/downloadclient-downloads:/downloads #optional
     ports:
       - 7878:7878
     restart: unless-stopped
@@ -42,7 +54,7 @@ services:
     image: lscr.io/linuxserver/sonarr
     container_name: sonarr-${NAMESPACE}
     env_file:
-      - ./.env
+      - .env
     environment:
       - PUID=1000
       - PGID=1000
@@ -51,8 +63,7 @@ services:
       - ${PATH_SONARR_CONF}:/config
       - ${PATH_SONARR_TV}:/tv #optional
       - ${PATH_QBIT_DOWNLOADS}:/downloads #optional
-      # - /path/to/tvseries:/tv #optional
-      # - /path/to/downloadclient-downloads:/downloads #optional
     ports:
       - 8989:8989
     restart: unless-stopped
+  

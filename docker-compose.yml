@@ -12,7 +12,7 @@ services:
     privileged: true
     volumes:
       - ${PATH_RCLONE_CONF}:/config
-      - ${PATH_RCLONE_HOSTDIR}:/mnt:shared
+      - ${PATH_RCLONE_HOSTDIR}:/mnt:rw
     environment:
       - CONFIG=--config /config/rclone.conf
       - SUBCMD=mount

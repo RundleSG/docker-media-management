@@ -1,17 +1,16 @@
 # docker-media-management
 
 ### Active Service
+- [x] rclone
 - [x] Jackett
 - [x] Sonarr
 - [x] Radarr
 
 
 ### Remaining Todo's
-
- - [ ] Add Rclone Service
-	 - [ ] Add Rclone volume-path variable 
- - [ ] Update Readme.md Active Services to link to Linuxserver.io Pages 
- - [ ] Update `PATH_SONARR_CONF` and `PATH_RADARR_CONF` to `PATH_SONARR_DATA` and `PATH_RADARR_DATA`
+ - [x] Added rclone service
+ - [ ] Add QBit
+ - [ ] Add NordVPN
 
 
 ### Bugs

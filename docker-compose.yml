@@ -1,5 +1,39 @@
 version: "2.1"
 services:
+  vpn:
+    image: azinchen/nordvpn:latest
+    cap_add:
+      - net_admin
+    devices:
+      - /dev/net/tun
+    environment:
+      - USER=Rundle.r97@gmail.com
+      - PASS=g_ReYqxaCv!3pPmi6aXmm
+      - COUNTRY=United States;Canada;Gernmany
+      - GROUP=Standard VPN servers
+      # - RANDOM_TOP=10
+      # - RECREATE_VPN_CRON=5 */3 * * *
+      - NETWORK=192.168.1.0/24;192.168.2.0/24
+      - OPENVPN_OPTS=--mute-replay-warnings
+    ports:
+      - 6881:6881
+      - 6881:6881/udp
+      - 8080:8080
+    restart: unless-stopped
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent
+    network_mode: service:vpn
+    container_name: qbittorrent-${NAMESPACE}
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ={$TZ}
+      - WEBUI_PORT=8080
+    volumes:
+      - ${PATH_QBIT_CONF}:/config
+      - ${PATH_QBIT_DOWNLOADS}:/downloads  
+    restart: unless-stopped
+
   rclone:
     image: lucashalbert/rclone
     container_name: rclone-${NAMESPACE}
